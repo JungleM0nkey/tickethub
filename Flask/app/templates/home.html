@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>{{ title }} - Open IT Ticket Hub</title>
+        <!-- CSS declaration -->
+        <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+        <!--<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">-->
+        <!--JS declaration  -->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+       <script src="{{url_for('static', filename='node_modules/sortable/src/jquery-ui-1.10.1.custom.js')}}"></script>
+       <script src="{{url_for('static', filename='js/home.js')}}"></script>
+       <script src="{{url_for('static', filename='js/sort.js')}}"></script>
+       <script>
+         $(document).ready(function(){ 
+                current_page = 'main_page'
+                  //get logged on user
+                var current_logged_on_user = '{{ current_user }}';
+                //hide garbage bins, then show when hovered over and hide again when hover ends
+                $('.fa-remove').hide();
+                $('.sort_entry').hover(function(){
+                   $(this).find('i').show();
+                });
+                $('.sort_entry').mouseleave(function(){
+                  $(this).find('i').hide();
+                });
+                $('.fa-remove').click(function(){
+                  $(this).parent().hide('fast');
+                  deleteSortOption(this);
+                });
+
+                //sort menu logic
+                $(document).mouseup(function(e){
+                      var sort_menu = $("#sort_results");
+                      var sort_button = $("#sort_button");
+                      //toggle between hide and show on click
+                      if (sort_button.is(e.target)){
+                        $(sort_menu).fadeToggle('fast');
+                      // if the target of the click isn't the menu nor a descendant of it
+                      }else if((!sort_menu.is(e.target) && sort_menu.has(e.target).length === 0)){
+                        sort_menu.hide();
+                      }
+                });
+
+                  // top left menu logic
+                $("#menu_button").mouseup(function(e){
+                      var sort_menu = $("#menu_results");
+                      var user_menu = $("#user_results");
+                      var sort_button = $("#menu_button");
+                      var icon = $('.fa-bars');
+                      var left_box_top = document.getElementById('left_box_top');
+                      var left_top_child = left_box_top.children;
+                      $(user_menu).fadeOut('fast');
+                      //toggle between hide and show on click
+                      if ((sort_button.is(e.target)) || (icon.is(e.target))) {
+                        //check if element is visible
+                        if ($(sort_menu).is(':visible')){
+                          $(sort_menu).fadeOut('fast');
+                          //unblur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                            if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','none');
+                            }
+                          }
+                        }else{
+                          $(sort_menu).fadeIn('fast');
+                          //blur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                          if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','blur(10px)');
+                            }
+                          }
+                      }
+                      // if the target of the click isn't the menu nor a descendant of it
+                      }
+                 });
+
+
+                // assign ticket menu logic
+                $("#assign_ticket_button").mouseup(function(e){
+                      var sort_menu = $("#menu_results");
+                      var user_menu = $("#user_results");
+                      var assign_ticket_button = $("#assign_ticket_button");
+                      var icon = $('.fa-bars');
+                      var left_box_top = document.getElementById('left_box_top');
+                      var left_top_child = left_box_top.children;
+                      $(sort_menu).fadeOut('fast');
+                      //toggle between hide and show on click
+                      if ((assign_ticket_button.is(e.target)) || (icon.is(e.target))) {
+                        //check if element is visible
+                        if ($(user_menu).is(':visible')){
+                          $(user_menu).fadeOut('fast');
+                          //unblur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                            if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','none');
+                            }
+                          }
+                        }else{
+                          $(user_menu).fadeIn('fast');
+                          //blur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                          if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','blur(10px)');
+                            }
+                          }
+                      }
+                    }
+                 });
+
+
+                //detect clicks on main left div to close menus
+                $('#left_box_top').click(function(e) {
+                      if (e.target == this) { 
+                        $('#search_results').fadeOut('fast');
+                      }
+                });
+
+                //detect clicks on main left bottom div to close menus
+                document.getElementById("chain_rows_area_user").onmousedown = function () {
+                      //$('#sort_results').fadeOut('fast');
+                      $('#search_results').fadeOut('fast');
+                      //$('#menu_results').fadeOut('fast');
+                };
+
+
+                //menu links
+                var logoutButton = document.getElementById('logout-link');
+                logoutButton.onclick = function() {
+                    console.log('Logging out');
+                    clearMemory();
+                };
+                var chngpwButton = document.getElementById('pwchange-link');
+                chngpwButton.onclick = function() {
+                  window.open("/changepw", '_self'); 
+                };
+                var usersButton = document.getElementById('users-link');
+                usersButton.onclick = function() {
+                  window.open("/usermgmt", '_self'); 
+                };
+                var csvButton = document.getElementById('csv-link');
+                csvButton.onclick = function() {
+                  window.open("/exportcsv", '_self'); 
+                };
+
+                //Uncheck all the sort options
+                //Uncheck the other boxes
+                var checkboxes = document.getElementsByClassName("checkbox_filter_box");
+                for (let i = 0; i < checkboxes.length; i++) {
+                        checkboxes[i].checked = false;
+                }
+
+                //get ticket order from user config
+                ticket_order = '{{ ticket_order }}'
+                if (ticket_order != 'custom'){
+                  var checkbox = document.getElementById(`checkbox_${ticket_order}`)
+                  checkbox.checked = true;
+                }
+                //get ticket rows
+                ticket_rows = document.querySelectorAll('[id^="ticket_row_"]');
+                //Typing in the search part that triggers the recursive search logic
+                    $('#search_field').on('input',function(){
+                      if( $(this).val().length > 0 ){
+                          $('#search_field').css('border-radius','10px 10px 0px 0px');
+                          $('#search_results').slideDown("slow");
+                          searchQuery();
+                      }else{
+                          $('#search_results').slideUp("fast");
+                          $('#search_field').css('border-radius','10px 10px 10px 10px');
+                      }
+                    });
+                
+
+
+                //only show tickets for current year
+                var d = new Date();
+                var current_year = d.getFullYear();
+                console.log("Loading ticket order: " +ticket_order)
+                //if (loading_ticket_order == 'date'){
+                organizeByYear(current_year, '{{ selected_ticket }}','{{ ticket_order }}');
+                //}
+                
+
+                //create month separators for the current year
+                //SELECT TICKET ON PAGE LOAD//////////////////////////
+                //console.log('Selecting ticket {{ selected_ticket }}');
+                //selectTicket('{{ selected_ticket }}');
+                //SELECT TICKET ON PAGE LOAD/////////////////////////
+
+                });
+                  
+       </script>
+      </head>
+    <body>
+      <div class="body-wrapper">
+      <div id="left_box" class="left-box">
+        <div id="left_box_top" class="left-box-top">
+        <div class="logo-wrapper">
+            <button class="home-btn" id="menu_button"><i class="fa fa-bars"></i></button>
+            <button class="home-btn" onclick="location.href='/index' "><i class="fa fa-refresh"></i></button>
+            <button class="new-ticket-btn" onclick="location.href='/newticket' ">New Ticket</button>
+            <button class="assign_ticket_button" id="assign_ticket_button" onclick="getuserlist()">Assign Ticket</button>
+            <select id="year_selector"  name="yearchange" onchange="organizeByYear(this.value, '{{ selected_ticket }}',ticket_order)"></select>
+            <!--New Ticket hidden menu-->
+            <div id="menu_results" class="menu_results">
+                {% if current_user.is_anonymous %}
+              <div class="menu_item" id="home-link">  <a  class="top_menu_links" href="{{ url_for('index') }}">Login</a><br></div>
+                {% else %}
+              <div class="menu_item" id="logout-link">  <span  class="top_menu_links">Logout</span><Br></div>
+                {% endif %}
+              <div class="menu_item" id="pwchange-link">  <span class="top_menu_links">Change Password</span><br></div>
+              <div class="menu_item" id="users-link">  <span class="top_menu_links" >Users</span><br></div>
+              <div class="menu_item" id="csv-link">  <span class="top_menu_links">Export CSV</span></div>
+            </div>
+            <!--Assign Ticket hidden menu-->
+            <div id="user_results" class="menu_results">
+              
+            </div>
+            <script>
+            $('#menu_results').hide(); //hide menu on load
+            $('#user_results').hide();
+            </script>
+         <!-- <img id="company_logo" src="{{ url_for('static', filename='images/logo.png') }}"/><br> -->
+        </div>
+      <!-- LEFT BOX TOP -->
+        <h1 id="current_user">Tickets for user: <mark class="red">{{ current_user }}</mark></h1>
+        <p id="current_user_total_tickets">Total tickets for user: {{ rows | count }}</p>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+      <!-- Search Form -->
+      <span style="font-size:14px;font-weight:bold">Search : </span>
+        <input type="search" id="search_field" autocomplete="off" name="searchinput"></input>
+        
+        <div id="search_results" class="search_results">
+          <!-- Search Results render here from search.html-->
+        </div>
+        <script>
+        $('#search_results').hide(); // hide search results on load
+        </script>
+      </div>
+      <!-- LEFT BOX BOTTOM -->
+      <div id="left_box_bottom" class="left-box-bottom">
+          <!--Ticket ID-->
+        <h1 style="float:left;margin:0;"id="selected_ticket_number">{{ selected_ticket }}</h1> <button id="copy-btn" class="copy-btn" onclick="copyTicketNumber()"><i class="fa fa-copy"></i></button><br><br>
+        <div id="chain_rows_area_user">
+        <!--Chain message selector-->
+          <select  id="chain_selector" name="chainmsgselect" onchange="selectTicketBody()">
+          {% for row in chain_rows %}
+              <option id="{{ row[0] }}" value="{{ row[0] }}">{{ row[0] }}</option>
+          {% endfor %}
+          </select>
+        <!--Status change selector-->
+        <div class="change_status_area">
+        <label  id="status_selector_label">Change Status:</label>
+        <select id="status_selector"  name="statuschange" onchange="changeTicketStatus()">
+          {% for status in status_list %}
+              <option id="{{ status }}" value="{{ status }}">{{ status }}</option>
+          {% endfor %}
+        </select>
+        <script>
+        </script>
+        </div>
+          <input type="hidden" name="currently_selected_ticket" value='{{ selected_ticket }}'/>
+         
+          <input type="submit" class="styled_button" id="edit_g_ticket" name="edit_g_ticket" value='Edit Notes'  onclick="editTicketNotes()"/>
+          <input type="submit" class="styled_button" id="delete_g_ticket" name="delete_g_ticket" value='Delete Ticket'  onclick="deleteTicket()"/>
+
+          
+          <!--Sort button starts here-->
+        <input type="submit" class="styled_button" id="sort_button" name="sort_button" value='Sort Tickets'/>
+        <!--all sort options go in this hidden div-->
+        <div id="sort_results" class="sort_results">
+          <div id="sort_option_1" class="sort_entry">
+              <input class='checkbox_filter_box' type='checkbox' id='checkbox_date'>
+              <label class='checkbox_filter_label' >By Date</label>
+          </div>
+         <!-- <div id="sort_option_2" class="sort_entry" >
+            <input class='checkbox_filter_box' type='checkbox' id='checkbox_type'>
+            <label class='checkbox_filter_label' >By Type</label>
+          </div>-->
+          <div id="sort_option_3" class="sort_entry" >
+            <input class='checkbox_filter_box' type='checkbox' id='checkbox_status'>
+            <label class='checkbox_filter_label' >By Status</label>
+          </div>
+          <!-- insert the custom orders here, jinja and javascript working together to create the monstrosity below-->
+          {% for order in custom_orders_list %}
+          <script>
+            // Create a new div
+            var newNode = document.createElement('div');
+            newNode.className = 'sort_entry';
+            // Get the reference node
+            var referenceNode = document.getElementsByClassName('sort_entry');
+            var referenceNode = referenceNode[referenceNode.length -1 ]
+            var num_of_options = getNumOfOptions()
+            var custom_option_name = '{{ order }}';
+            newNode.id = `sort_option_${num_of_options+1}`
+            newNode.innerHTML = `<input class='checkbox_filter_box' type='checkbox' id='checkbox_{{ order }}'/>
+                                  <label class='checkbox_filter_label' >{{ order }}</label> 
+                                  <i id='{{ order }}_trash_icon' class='fa fa-remove fa-lg'></i>`;
+            // Insert the new node before the reference node
+            referenceNode.after(newNode);
+          </script>
+          {% endfor %}
+          <!-- create custom orders button is below-->
+            <div id="create_new_sort_option" class="sort_entry" onclick="newSortOption('{{ current_user }}')">
+                <b id="save_new_option" style="font-size:15px;margin-right:8px;margin-left:5px;">+</b>
+                <span>Save Current</span>
+            </div>
+          </div>
+      </div>
+      <script>
+      $('#sort_results').hide();//hide the sort results window on load
+      </script>
+       {% if ticket_message %}
+       <textarea id="ticket_text_area" class="text-area-hub" readonly >{{ ticket_message }}</textarea>
+       {% endif %}
+      </div>
+    </div>
+    <!-- TICKET LIST STARTS HERE -->
+      <div id="right-box" class="right-box">
+          {% for row in rows %}
+          <!-- This does the coloring of the row-->
+          {% if row[4] == 'COMPLETED' %}
+            <div id='ticket_row_{{ row[1] }}' href="{{ row[1] }}" onClick="selectTicket('{{ row[1] }}')" class="entry-row-hub-completed">
+            {% else %}
+              <div id='ticket_row_{{ row[1] }}' href="{{ row[1] }}" onClick="selectTicket('{{ row[1] }}')" class="entry-row-hub">
+          {% endif %}
+                  <!-- Ticket ID -->
+                  <div id='id_section' class="entry-row-hub-section"> <span> {{ row[1] }}</span> </div>
+                  <!-- Ticket Title -->
+                  <div id='title_section' class="entry-row-hub-section"> <span> {{ row[2] }}</span> </div>
+                  <!-- Ticket date submitted-->
+                  <div id='date_section' class="entry-row-hub-section"> <span> {{ row[3] }}</span> </div>
+                  <!-- Ticket status -->
+                  <div id='status_section_{{ row[1] }}' class="entry-row-hub-section"> <span> {{ row[4] }}</span> </div>
+            </div>
+          {% endfor %}
+          </div>
+      </div>
+    </div>
+    <script>
+//This magical part here lets you sort the items as you see fit via drag and drop, and also breaks css but then most of this code below fixes the messup :/
+      // yeah dont even ask
+        $(".right-box").sortable({
+            axis: "y",
+            revert: true,
+            scroll: true,
+            placeholder: "sortable-placeholder",
+            cursor: "move",
+            opacity: 0.7
+            //cancel: ".month-separator" //dont allow the separators to be draggable
+        });
+        $(".right-box:hidden").sortable('disable'); 
+        //part below fixes the styling while its lifted
+        //Run this while the ticket is lifted up
+        $(".right-box").on("sortstart", function( event, ui ) {
+            ui.item.data('original_position', ui.item.index())
+            //get all the positions of every ticket.
+            var sortedIDs = $( ".right-box" ).sortable( "toArray" );
+            //get the id of the lifted ticket
+            var div_id=ui.item.attr('id');
+            //get the id of the tcket below
+            var div_id_below = sortedIDs[ui.item.index()+2];
+            //applying styling fixes while the ticket is lifted
+            fixStyling(div_id,div_id_below);
+        });
+
+        //Run this while the ticket is being hovered
+        $(".right-box").on("sortchange", function( event, ui ) {
+            //get all the positions of every ticket.
+            var sortedIDs = $( ".right-box" ).sortable( "toArray" );
+            //get the id's of 2 tickets below and one ticket above
+            var div_id_index = ui.placeholder.index();
+            var div_id_below = sortedIDs[div_id_index+1];
+            var div_id_below_2 = sortedIDs[div_id_index+2];
+            var div_id_above = sortedIDs[div_id_index-2];
+            var div_id_above_2 = sortedIDs[div_id_index-3];
+            //Check the movement direction, compare starting position to the position after the change
+            //Check if just starting change, if so then use the original pos variable.
+            if (ui.item.data('original_position')){
+              //fix css under the first ticket if drag is fast up
+              $(`#${sortedIDs[ui.item.data('original_position')+1]}`).css('border-top','0px solid grey');
+              //fix css under the first ticket if drag is fast down
+              $(`#${sortedIDs[ui.item.data('original_position')]}`).css('border-top','0px solid grey');
+              //get movement direct on first drag
+              movement_direction = ui.item.data('original_position') - ui.placeholder.index();
+              if (movement_direction == 1){
+                console.log('Moving up 1');
+                $(`#${div_id_below}`).css('border-top','1px solid grey');
+                $(`#${div_id_below_2}`).css('border-top','0px solid grey');
+                }else if(movement_direction == -1){
+              }else if(movement_direction == -1){
+                console.log('Moving down 1');
+                $(`#${div_id_above}`).css('border-top','0px solid grey');
+                $(`#${div_id_above_2}`).css('border-top','0px solid grey');
+              }
+              //set the original position to false to stop logic from going hre again
+              ui.item.data('original_position', false)
+            //run this block of code if the ticket was never let go and is just being dragged around aimlessly
+            }else{
+              movement_direction = ui.item.data('start_position') - ui.placeholder.index();
+              if (movement_direction == 1){
+                console.log('Moving up 2');
+                $(`#${div_id_below}`).css('border-top','1px solid grey');
+                $(`#${div_id_below_2}`).css('border-top','0px solid grey');
+              }else if(movement_direction == -1){
+                console.log('Moving down 2');
+                $(`#${div_id_above}`).css('border-top','0px solid grey');
+                $(`#${div_id_above_2}`).css('border-top','0px solid grey');
+              }
+            }       
+        });
+        
+        //Get the starting position
+        $(".right-box").on("sort", function( event, ui ) {
+            ui.item.data('start_position', ui.placeholder.index())
+        });
+
+        //Run this once the ticket is dropped
+        $(".right-box").on("sortstop", function( event, ui ) {
+            //get all the positions of every ticket.
+            var sortedIDs = $( ".right-box" ).sortable( "toArray" );
+            tickets_array = []
+            sortedIDs.forEach(element => {
+              $(`#${element}`).css('border-top','0px solid grey');
+              tickets_array.push(String(element));
+            });
+
+            //send data to backend, username, ticket order style and ticket list
+            var username = '{{ current_user }}';
+            var ticket_order = 'custom'
+            var sortedIDs = $( ".right-box" ).sortable( "toArray" );
+            tickets_array = []
+            sortedIDs.forEach(element => {
+            $(`#${element}`).css('border-top','0px solid grey');
+              tickets_array.push(String(element));
+            });
+            updateOrder(ticket_order, tickets_array, username);
+
+            //checkbox magic
+            //document.getElementById("checkbox_custom").checked = true;
+            //var selected_option = $('#checkbox_custom').attr('id');
+            uncheckAllCheckboxes()
+        });
+     </script>
+    </body>
+</html>

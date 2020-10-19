@@ -1,0 +1,18 @@
+<html>
+<head>
+</head>
+<body>
+{% if title_row %}
+   {% for row in title_row %}
+        <!-- Each search result is its own form, when the search result is licked, that form is submitted, 
+            the only thing submitted is the ticket ID in the hidden input field -->
+       <form style="padding:0;margin:0;" action="" name="search-form-{{ row[1] }}" method="POST">
+        <input type="hidden" name="ticket" value='{{ row[1] }}'/>
+       <div onClick="ticketSelectScroll('{{ row[1] }}');" class="search_entry_row">{{ row[2] }}<br></div>
+       </form>
+   {% endfor %}
+{% else %}
+<span class="error_message">Error: Could not find search results</span>
+{% endif %}
+</body>
+</html>

@@ -1,0 +1,42 @@
+<html>
+<head>
+    <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/login_styles.css') }}">
+</head>
+<body>
+<div id="wrapper">
+    <center>
+        <!--<h1 style="font-family:arial;">Select User</h1>-->
+        <form action="" method="post" novalidate>
+            {{ form.hidden_tag() }}
+            <p>
+
+            {{ form.username.label }}<br>
+            {{ form.username(size=32) }}<br>
+
+        <!-- {% for error in form.username.errors %}<br>
+                    <span style="color: red;">{{ error }}</span>
+                {% endfor %} -->
+            </p>
+            <p>
+            {{ form.password.label }}<br>
+            {{ form.password(size=32) }}<br>
+            {% for error in form.password.errors %}
+                <span class="error_message" >{{ error }}</span>
+            {% endfor %}
+            </p>
+        <!-- <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>-->
+            <div id="buttons_div">
+                    <p>{{ form.submit() }}</p><!--<input type="button" value="Forgot Password" id="forgotpw_button"/></p>-->
+            </div>
+        </form>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <span class="error_message" >{{ message }}</span>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+    </center>
+</div>
+</body>
+</html>

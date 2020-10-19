@@ -1,0 +1,8 @@
+Ticket Number,Ticket Title,Date Started,Ticket States,Assigned User
+G-000007,Arcu vitae elementum curabitur vitae nunc,2020-10-19,IN PROGRESS,admin
+G-000006,Molestie a iaculis at erat pellentesque,2020-10-19,IN PROGRESS,admin
+G-000005,Tellus mauris a diam maecenas sed,2020-10-19,COMPLETED,admin
+G-000004,Adipiscing diam donec adipiscing tristique,2020-10-19,IN PROGRESS,admin
+G-000003,Lorem ipsum dolor sit amet,2020-10-19,COMPLETED,admin
+G-000002,Secondaty task,2020-10-19,IN PROGRESS,admin
+G-000001,Example IT Task,2020-03-17,COMPLETED,admin

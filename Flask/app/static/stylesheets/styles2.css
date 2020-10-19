@@ -1,0 +1,234 @@
+
+a{
+    color:#cccccc;
+    float:left;
+    text-decoration: none;
+}
+a:hover{
+    color:black;
+}
+.mainbody{
+
+    border-radius: 10px;
+    width:800px;
+    margin:0 auto;
+    font-family:arial;
+    height:auto;
+    padding:25px;
+}
+.mainbody2{
+    
+    border-radius: 10px;
+    width:800px;
+    margin:0 auto;
+    font-family:arial;
+    height:auto;
+    padding:25px;
+}
+
+ h1{
+font-size:26px;
+
+}
+h1 span{
+    color:Red;
+}
+#ticket_title{
+    margin-bottom:20px;
+    width:300px;
+    border:1px solid #cccccc;
+    border-radius: 5px;
+    padding:4px;
+    margin-top:20px;
+    margin-right:600px;
+}
+
+#ticket_body{
+    border:1px solid #cccccc;
+    border-radius: 5px;
+    padding:4px;
+    width:700px;
+    resize: none;
+}
+
+#create_ticket{
+    float:right;
+    border:1px solid #cccccc;
+    background-color:white;
+    padding:5px;
+    margin-right:100px;
+    width:70px;
+    border-radius: 5px;
+    margin-top:10px;
+
+}
+#create_ticket:hover{
+    color:white;
+    background-color:black;
+}
+
+/* USER MANAGEMENT STYLING */
+
+table{
+    border-collapse: collapse;
+   
+
+}
+tr{
+    border-bottom:1px solid #cccccc;
+    border-left:1px solid #cccccc;
+    border-right:1px solid #cccccc;
+    border-radius: 10px;
+    
+}
+
+tr:hover{
+    background-color:#f6f6f6;
+    cursor:pointer;
+}
+tr:hover > .user_mgmt_button{
+    background-color:#f6f6f6;
+}
+tr:first-child:hover{
+    background-color:white;
+}
+tr:first-child{
+    border-top:1px solid #cccccc;
+    
+}
+.selected_user_row{
+    background-color:#f6f6f6;
+}
+
+th{
+    border-right:1px solid #cccccc;
+    padding-left:20px;
+    padding-right:20px;
+    padding-top:10px;
+    padding-bottom:10px;
+    width:300px;
+    border-radius: 10px;
+}
+th:last-child{
+    border-right:0;
+}
+td{
+    border-right:1px solid #cccccc;
+    padding:20px;
+    margin:0;
+    border-radius: 10px;
+    text-align:center;
+
+}
+td:last-child{
+    border-right:0;
+    padding:0;
+    border-radius: 10px;
+
+}
+
+.usermgmt{
+    font-family:arial;
+}
+.user_mgmt_button{
+    border:none;
+    width:100%;
+    height:100%;
+    background-color:rgba(255, 255, 255, 0);
+}
+.user_mgmt_button:hover{
+    font-weight:bolder;
+    cursor:pointer;
+}
+
+.button{
+    border:1px solid #cccccc;
+    height:32px;
+    font-size:13px;
+    transition: 0.3s;
+    vertical-align: middle;
+    margin-top:10px;
+    background-color:white;
+    border-radius:5px;
+    float:right;
+  }
+  .button:hover{
+    opacity: 1;
+    background-color:#282828;
+    color:white;
+  }
+  .button_disabled{
+    border:1px solid #cccccc;
+    height:32px;
+    font-size:13px;
+    transition: 0.3s;
+    vertical-align: middle;
+    margin-top:10px;
+    background-color:white;
+    border-radius:5px;
+    float:right;
+    color:#cccccc;
+  }
+
+  /* REGISTRATION PAGE */
+  .submit_new_user{
+    border:1px solid #cccccc;
+    height:32px;
+    width:60px;
+    font-size:13px;
+    transition: 0.3s;
+    vertical-align: middle;
+    margin-top:40px;
+    background-color:white;
+    border-radius:5px;
+    margin-left:285px;
+  }
+  .submit_new_user:hover{
+    background-color:black;
+    color:white;
+
+  }
+
+.register_form {
+    width: 80%;
+    margin: 0 auto;
+    
+}
+
+.register_form label, input {
+    /* in order to define widths */
+    display: inline-block;
+    margin-top:10px;
+    
+}
+/*how the input fields look*/
+.register_form input{
+    border:1px solid grey;
+    border-radius:5px;
+    padding:2px;
+}
+
+.register_form label {
+    width: 30%;
+    /* positions the label text beside the input */
+    text-align: right;
+}
+
+.register_form label + input {
+    width: 30%;
+    /* large margin-right to force the next element to the new-line
+       and margin-left to create a gutter between the label and input */
+    margin: 0 30% 0 4%;
+}
+
+.register_form .mbc_checkbox{
+    margin:0;
+    width:70px;
+}
+
+/* only the submit button is matched by this selector,
+   but to be sure you could use an id or class for that button */
+.register_form input + input {
+
+}
+

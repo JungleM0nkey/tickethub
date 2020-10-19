@@ -1,0 +1,40 @@
+<html>
+    <head>
+            <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles2.css') }}">
+            <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+            <script>
+                    $(document).ready(function(){ 
+                        $('#email').blur(function() {
+                                var email = $('#email').val()
+                                var username = email.split("@")
+                                $('#username').val(username[0]);
+                        });
+                        
+                    });
+            </script>
+    </head>
+    <body>
+            <div class=mainbody2>
+                    <h1>Create new Ticket Hub <tag style="color:red">IT User</tag> </h1>
+                    <a href="{{ url_for('usermgmt') }}">🡄 Back </a><br><br>
+                    <form action="" class="register_form" method="POST">
+                        <label>Email</label><input id="email" type="text" name="email"/><br>
+                        <label>Username</label><input id="username" type="text" name="username" style="background-color:#f5f5f5;" readonly/><br>
+                         <label>Password</label><input type="password" name="password"/><br>
+                         <label>O365 Email Tickets</label><input type="checkbox" class="mbc_checkbox" name="mbc_checkbox" value="mbc_level_tickets"/><br>
+                         <input type="submit" class="submit_new_user" name="create_user" value="Submit"/><br><br>
+                         {% if error %}
+                         <center>
+                                 <span style="color:red;text-align:center;">{{ error }}</span><br>
+                        </center>
+                         {% endif %}
+                         {% if o365_message %}
+                         <center>
+                                <span style="color:green;text-align:center;">{{ o365_message }}</span><br>
+                        </center>
+                        {% endif %}
+                    </form>
+
+            </div>
+    </body>
+</html>

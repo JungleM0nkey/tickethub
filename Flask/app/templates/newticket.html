@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <title>Create New Ticket</title>
+        <!-- CSS declaration -->
+        <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles2.css') }}">
+        <!-- JS declaration 
+        <script src="{{url_for('static', filename='js/main.js')}}"></script>-->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+       <script>
+       $(document).ready(function(){ 
+        
+        $('#back-button').click(function(){
+                $('body').fadeOut("fast", function(){
+                    var myWindow = window.open("/home", "_self");
+                });
+            });
+        });
+      </script>
+    </head>
+    <body>
+        <div class="mainbody">
+                {% if editing == False %}
+                <h1>Create new Ticket <span>{{ ticket_number }}</span></h1>
+                {% else %}
+                <h1>Editing Ticket <span>{{ ticket_number }}</span></h1>
+                {% endif %}
+                <a style="cursor:pointer" id="back-button">🡄 Back </a><br>
+                
+                <form action='/newticket' method="POST">
+                    <input type="hidden" name="currently_selected_ticket" value='{{ ticket_number }}'/>
+                    <input id="ticket_title" name="ticket_title" type="text" width="300" value="{{ticket_title}}" required/>  <b style="float:right;color:#cccccc;margin-right:100px;"></b>
+                    <textarea id="ticket_body" name="ticket_body" rows="10" cols="60" required>{{ticket_body}}</textarea><br>
+                    {% if editing == False %}
+                    <input id="create_ticket" type="submit" name="create_ticket" value="Submit"></input>
+                    {% else %}
+                    <input id="create_ticket" type="submit" name="update_ticket" value="Update"></input>
+                    {% endif %}
+                </form>
+        </div>
+
+    </body>
+
+
+
+
+
+
+</html>

@@ -1,0 +1,83 @@
+.sortable-placeholder{
+  width:10px;
+  height:42px;
+  background-color:rgb(231, 142, 142);
+}
+
+
+#create_new_sort_option:hover{
+cursor:pointer;
+}
+
+
+#logout_link:hover{
+  cursor:pointer;
+}
+
+
+body{
+  font-family:arial;
+}
+
+#wrapper{
+  
+  width:500px;
+  height:250px;
+  margin:auto;
+  padding:20px;
+ 
+}
+
+
+input{
+  border-radius:5px;
+  border:1px solid #cccccc;
+  padding:3px;
+  margin:2px;
+}
+
+#forgotpw_button{
+  width:110px;
+  height:24px;
+  margin-top:18px;
+}
+
+#forgotpw_button:hover{
+  color:white;
+  background-color:black;
+
+}
+
+#login_button{
+  width:100px;
+
+}
+
+
+#login_button:hover{
+  background-color:#ed3e0e;
+  color:white;
+}
+
+
+.error_message{
+  color:Red;
+  margin:2px;
+
+}
+
+#buttons_div{
+  width:300px;
+  margin:0 auto;
+
+  overflow:hidden;
+  display: flex; 
+  flex-direction: row; 
+  justify-content: center;
+  
+}
+
+#buttons_div input{
+
+
+}

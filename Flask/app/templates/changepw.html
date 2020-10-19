@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>Change your Password</title>
+        <!-- CSS declaration -->
+        <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/changepw_styles.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+        <!--JS declaration  -->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+       <script src="{{url_for('static', filename='node_modules/sortable/src/jquery-ui-1.10.1.custom.js')}}"></script>
+       <script>
+       $(document).ready(function(){ 
+        
+        $('#back-button').click(function(){
+                $('body').fadeOut("fast", function(){
+                    var myWindow = window.open("/home", "_self");
+                });
+            });
+        });
+
+       </script>
+      </head>
+    <body>
+      <div id="top">
+           <h1 style="padding-left:70px;margin-bottom:5px;">Change Password</h1>
+           <a style="cursor:pointer;" id="back-button">🡄 Back </a> 
+      </div>
+      <div id="wrapper">
+          <form action="" method="post" novalidate>
+            <div class="row"><label>Username: </label></label><input name="username" type="text"/><br></div>
+            <div class="row"><label>Old Password: </label></label><input name="oldpw" type="password"/><br></div>
+            <div class="row"><label>New Password: </label></label><input name="newpw" type="password"/><br></div>
+            <div class="row"><label>Confirm: </label></label><input name="newpw2" type="password"/></div>
+            <input id="submit_button" value="Submit" type="submit"/>
+            <br><br>
+            {% if error %}
+              <center><div style="color:Red">{{ error }}</div></center>
+            {% elif success %}
+              <center><div style="color:Green">{{ success }}</div></center>
+            {% endif %}
+          </form>
+      </div>
+    </body>
+</html>

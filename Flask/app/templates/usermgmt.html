@@ -1,0 +1,72 @@
+<html>
+<head>
+    <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles2.css') }}">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+    <script src="{{url_for('static', filename='js/home.js')}}"></script>
+       <script>
+           function changeStatus(username_for_row){
+            
+            var username = username_for_row
+            var status =  $('#user_status_'+username).text()
+            console.log('Current notifications status:' + username,status);
+            $.post( '/usermgmt', { "username": username, "status":status } ).done(function(response) {
+                $('#user_status_'+username).html(response['new_status']);
+                if (response['new_status'] == 'ENABLED'){
+                    $('#user_status_'+username).css('color','green');
+                }else{
+                    $('#user_status_'+username).css('color','red');
+                }
+            }).fail(function() {
+                $('#user_status').html('Error: Could not find search results');
+            });
+        }
+       </script>
+</head>
+<body>
+
+<div class=mainbody2>
+
+
+<h1>Open IT Ticket Hub <tag style="color:red">User Management</tag> </h1>
+<a href="{{ url_for('index') }}">🡄 Back </a><br><br>
+
+<table id="user_table">
+    <tr>
+
+        <th>Username</th>
+        <th>Total Tickets</th>
+        <th>Email</th>
+        <th>Notifications</th>
+        <th>Change Notifications</th>
+    </tr>
+    {% for data in user_data %}
+
+    <tr id='user_row_{{ data[0] }}'onclick="selectUser('{{ data[0] }}')">
+        <!--Username-->
+        <td>{{ data[0] }}</td>
+        <!--Total tickets-->
+        {% if data[0] == 'it' %}
+            <td>{{ total }}</td>
+        {% else %}
+            <td>{{ ticket_collection[data[0]] }}</td>
+        {% endif %}
+        <!--Email-->
+        <td>{{ data[1] }}</td>
+        <!--Notifications-->
+        {% if data[2] == 'ENABLED' %}
+        <td id="user_status_{{ data[0] }}" style="color:green;">{{ data[2] }}</td>
+        {% else %}
+        <td id="user_status_{{ data[0] }}" style="color:red;">{{ data[2] }}</td>
+        {% endif %}
+        <form action="" method="POST">
+        <td><input class="user_mgmt_button" type="button" name="change_user_status" onclick="changeStatus('{{ data[0] }}')" value="Submit"/></td>
+        </form>
+    </tr>
+    {% endfor %}
+</table>
+<input type="button" class="button" onclick="location.href='/register'" value="New User"/>
+<input type="button" id="delete_user_button" class="button_disabled" style="margin-right:10px" onclick='deleteUser()' value="Delete User"/>
+</div>
+
+</body>
+</html>

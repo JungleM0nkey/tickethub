@@ -1,0 +1,212 @@
+<html>
+    <head>
+        <title>Tickethub Common Page</title>
+        <!-- CSS declaration -->
+        <!--<link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/styles.css') }}">-->
+        <link  type="text/css" rel="stylesheet" href="{{ url_for('static', filename='stylesheets/tickethub_style.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+        <!-- JS declaration 
+        <script src="{{url_for('static', filename='js/main.js')}}"></script>-->
+       <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+       <script src="{{url_for('static', filename='js/tickethub.js')}}"></script>
+      <script>       
+  
+      $(document).ready(function(){ 
+           //get ticket rows
+           ticket_rows = document.querySelectorAll('[id^="ticket_row_"]');
+          //Typing in the search part that triggers the recursive search logic
+          $('#search_results-hub').hide();
+          $('#menu_results').hide();
+          $('#filter_results').hide();
+          filterByName();
+          //Checkoff All users filter
+          $('#search_field').on('input',function(){
+              if( $(this).val().length > 0 ){
+                  $('#search_field').css('border-radius','10px 10px 0px 0px');
+                  $('#search_results-hub').slideDown("slow");
+                  searchQuery();
+              }else{
+                  $('#search_results-hub').slideUp("fast");
+                  $('#search_field').css('border-radius','10px 10px 10px 10px');
+            }});
+            selectTicket('{{ rows[0][1] }}');
+
+            //menu links
+            var logoutButton = document.getElementById('logout-link');
+            logoutButton.onclick = function() {
+                console.log('Logging out');
+                clearMemory();
+            };
+
+            $(document).mouseup(function(e){
+                      var sort_menu = $("#menu_results");
+                      var sort_button = $("#menu_button");
+                      var icon = $('.fa-bars');
+                      var left_box_top = document.getElementById('left_box_top_hub');
+                      var left_top_child = left_box_top.children;
+                      //toggle between hide and show on click
+                      if ((sort_button.is(e.target)) || (icon.is(e.target))) {
+                        //check if element is visible
+                        if ($(sort_menu).is(':visible')){
+                          $(sort_menu).fadeOut('fast');
+                          //unblur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                            if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','none');
+                            }
+                          }
+                          
+                        }else{
+                          $(sort_menu).fadeIn('fast');
+                         //blur elements under the menu
+                          for (var i = 0; i < left_top_child.length; i++) {
+                          if (left_top_child[i].id != menu_results){
+                              $(`#${left_top_child[i].id}`).css('filter','blur(5px)');
+                            }
+                          }
+                        }
+
+                      // if the target of the click isn't the menu nor a descendant of it
+                      }else if((!sort_menu.is(e.target) && sort_menu.has(e.target).length === 0)){
+                        sort_menu.hide();
+                        //unblur elements under the menu
+                        for (var i = 0; i < left_top_child.length; i++) {
+                          if (left_top_child[i].id != menu_results){
+                            $(`#${left_top_child[i].id}`).css('filter','none');
+                          }
+                        }
+                      }
+                 });
+
+        });
+      </script>
+    </head>
+    <body>
+      <div class="body-wrapper-hub">
+        <!-- LEFT SIDE START -->
+<div class="left-box-hub">
+        <div class="left-box-top-hub" id="left_box_top_hub">
+          <div class="logo-wrapper-hub">
+            <button class="home-btn" id="menu_button"><i class="fa fa-bars"></i></button>
+            <button class="home-btn" onclick="location.href='/index'"><i class="fa fa-home"></i></button>
+            <!--Hidden main menu-->
+            <div id="menu_results" class="menu_results">
+                <div class="menu_item" id="csv-link">  <span class="top_menu_links">Export CSV</span></div>
+                <div class="menu_item" id="logout-link">  <span class="top_menu_links">Logout</span><Br></div>
+            </div>
+          </div>
+        <!-- LEFT BOX TOP -->
+        <h1 id="tickets-count">{{ rows | count }} tickets for: <mark class="red">IT Department</mark></h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <!-- SEARCH PART -->
+        <span id="search_label" style="font-size:14px">Search : </span>
+        <input id="search_field" autocomplete="off" type="search" name="searchinput"></input>
+        <div id="search_results-hub" class="search_results-hub">
+            <!-- Search Results render here from search.html-->
+        </div> 
+      </div>
+      <!-- LEFT BOX BOTTOM -->
+      <div class="left-box-bottom">
+        
+          <h1 style="float:left;margin:0;"id="selected_ticket_number">{{ selected_ticket }}</h1> <button id="copy-btn" class="copy-btn" onclick="copyTicketNumber()"><i class="fa fa-copy"></i></button><br><br><br>
+        {% if chain_rows %}
+        <div id="chain_rows_area">
+        <select id="chain_selector" name="chainmsgselect" onchange="selectTicketBody();">
+        {% for row in chain_rows %}
+            <option value="{{ row[0] }}" >{{ row[0] }}</option>
+        {% endfor %}
+        </select>
+        <input type="submit" class="styled_button" id="filter_by_name" name="filter_by_name" value='Filter'  onclick="$('#filter_results').fadeToggle('fast');"/>
+        <!-- Filter results go in this hidden div-->
+        <div id="filter_results" class="filter_results">
+          <div class="username_entry"></div>
+        </div>
+        <!-- Stop filter results here -->
+        </div>
+        {% else %}
+        <mark class="red"><p>No ticket communication found</p></mark>
+        {% endif %}
+       {% if ticket_message %}
+       <textarea id="ticket_text_area" class="text-area-hub" readonly   >{{ ticket_message }}</textarea>
+       {% endif %}
+      </div>
+    </div>
+<div>
+<div id="right-box-hub" class="right-box-hub">
+      {% for row in rows %}
+      <!-- This does the coloring of the row-->
+      {% if row[4] == 'COMPLETED' %}
+        <div id='ticket_row_{{ row[1] }}' onClick="selectTicket('{{ row[1] }}')" class="entry-row-hub-completed">
+      {% else %}
+        <div id='ticket_row_{{ row[1] }}' onClick="selectTicket('{{ row[1] }}')" class="entry-row-hub">
+      {% endif %}
+       <!-- Ticket ID -->
+       <div class="entry-row-hub-section"> <span> {{ row[1] }}</span> </div>
+       <!-- Ticket Title -->
+        <div class="entry-row-hub-section"> <span> {{ row[2] }}</span> </div>
+       <!-- Ticket date submitted-->
+       <div class="entry-row-hub-section"> <span> {{ row[3] }}</span> </div>
+       <!-- Ticket username -->
+       <div id='username_section' class="entry-row-hub-section"> <span> {{ row[7] }}</span> </div>
+       <!-- Ticket status -->
+       <div class="entry-row-hub-section"> <span> {{ row[4] }}</span> </div>
+      </div>
+      {% endfor %}
+    </div>
+
+<!-- first user list starts here 
+<div id="right-box1" class="right-box1">       
+          <div class="separator">ishevchenko: {{ rows_1 | count }} Tickets</div>  
+          {% for row in rows_1 %}
+          {% if row[4] == 'COMPLETED' and row[1] != selected_ticket  %}
+            <div class="entry-row" style="background-color:#b3bfcc;color:#383838">
+          {% elif row[1] == selected_ticket %}
+            <div class="entry-row" style="background-color:#edd350;color:#383838">
+          {% else %}
+            <div class="entry-row">
+          {% endif %}
+            <form action="" method="post" novalidate>
+                <a href="#{{row[1]}}"><div class="row-section"><button type="submit" class="row-button" id="{{ row[1] }}"  name="ticket" value="{{ row[1] }}"></button></span><span class="row-text">{{ row[1] }}</span></div></a>
+                <div class="row-section"><button type="submit" class="row-button" id="{{ row[2] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[2] }}</span></div>
+                <div class="row-section"><button type="submit" class="row-button" id="{{ row[3] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[3] }}</span></div>
+                <div class="row-section"><button type="submit" class="row-button" id="{{ row[4] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[4] }}</span></div>
+            </form>
+           </div>
+        {% endfor %}           
+</div> 
+<div id="right-box2" class="right-box2">
+        <div class="separator">avivekananthan: {{ rows_2 | count }} Tickets</div> 
+        {% for row in rows_2 %}   
+        {% if row[4] == 'COMPLETED' and row[1] != selected_ticket  %}
+          <div class="entry-row" style="background-color:#b3bfcc;color:#383838">
+        {% elif row[1] == selected_ticket %}
+          <div class="entry-row" style="background-color:#edd350;color:#383838">
+        {% else %}
+          <div class="entry-row">
+        {% endif %}
+          <form action="" method="post" novalidate>
+              <a href="#{{row[1]}}"><div class="row-section"><button type="submit" class="row-button" id="{{ row[1] }}"  name="ticket" value="{{ row[1] }}"></button></span><span class="row-text">{{ row[1] }}</span></div></a>
+              <div class="row-section"><button type="submit" class="row-button" id="{{ row[2] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[2] }}</span></div>
+              <div class="row-section"><button type="submit" class="row-button" id="{{ row[3] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[3] }}</span></div>
+              <div class="row-section"><button type="submit" class="row-button" id="{{ row[4] }}" name="ticket" value="{{ row[1] }}"></button><span class="row-text">{{ row[4] }}</span></div>
+          </form>
+         </div>
+        {% endfor %}
+</div>
+-->
+
+
+
+
+
+
+</body>
+</html>
